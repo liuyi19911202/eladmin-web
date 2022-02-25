@@ -23,7 +23,7 @@
       <el-table-column :show-overflow-tooltip="true" prop="create_time" label="发布时间" />
       <el-table-column :show-overflow-tooltip="true" prop="update_time" label="创建时间" />
     </el-table>
-    <!--分页组件-->
+    <!--分页 组件-->
     <pagination />
   </div>
 </template>
