@@ -1,4 +1,4 @@
-<template>
+<!--<template>
   <a href="https://github.com/elunez/eladmin" target="_blank" class="github-corner" aria-label="View source on Github">
     <svg
       width="80"
@@ -21,7 +21,7 @@
       />
     </svg>
   </a>
-</template>
+</template>-->
 
 <style scoped>
 .github-corner:hover .octo-arm {
