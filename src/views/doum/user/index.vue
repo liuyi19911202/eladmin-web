@@ -27,11 +27,7 @@
     <!--表格渲染-->
     <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
       <el-table-column :selectable="checkboxT" type="selection" width="55" />
-      <el-table-column :show-overflow-tooltip="true" prop="nickname" label="名称" />
-      <el-table-column :show-overflow-tooltip="true" prop="unique_id" label="抖音号" />
-      <el-table-column :show-overflow-tooltip="true" prop="aweme_count" label="作品数" />
-      <el-table-column :show-overflow-tooltip="true" prop="follower_count" label="粉丝数" />
-      <el-table-column prop="avatar_medium[0]" label="预览图">
+      <el-table-column prop="avatar_medium[0]" width="55">
         <template slot-scope="{row}">
           <el-image
             :src="row.avatar_medium[0]"
@@ -46,6 +42,10 @@
           </el-image>
         </template>
       </el-table-column>
+      <el-table-column :show-overflow-tooltip="true" prop="nickname" label="名称" />
+      <el-table-column :show-overflow-tooltip="true" prop="unique_id" label="抖音号" />
+      <el-table-column :show-overflow-tooltip="true" prop="aweme_count" label="作品数" />
+      <el-table-column :show-overflow-tooltip="true" prop="follower_count" label="粉丝数" />
       <el-table-column :show-overflow-tooltip="true" prop="create_time" width="136px" label="创建日期" />
       <el-table-column v-if="checkPer(['admin','timing:edit','timing:del'])" label="操作" width="170px" align="center" fixed="right">
         <template slot-scope="scope">

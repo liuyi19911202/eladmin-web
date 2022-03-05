@@ -19,7 +19,7 @@ export function del(ids) {
 export function execution(params) {
   return request({
     url: 'api/doum/users/getUser',
-    method: 'get',
+    method: 'post',
     params
   })
 }

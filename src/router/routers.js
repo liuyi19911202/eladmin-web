@@ -57,6 +57,20 @@ export const constantRouterMap = [
         meta: { title: '个人中心' }
       }
     ]
+  },
+  {
+    path: '/doum/like',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'detail/:aweme_id',
+        component: (resolve) => require(['@/views/doum/like/detail'], resolve),
+        name: '视频详情',
+        meta: { title: '视频详情' }
+      }
+    ]
   }
 ]
 
