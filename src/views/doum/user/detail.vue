@@ -3,25 +3,6 @@
     <!--工具栏-->
     <div class="head-container">
       <div v-if="crud.props.searchToggle">
-        <!-- 搜索 -->
-        <el-input v-model="query.nickname" clearable size="small" placeholder="作者名称查询" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery" />
-        <el-input v-model="query.remark" clearable size="small" placeholder="备注查询" style="width: 200px;" class="filter-item" @keyup.enter.native="toQuery" />
-        <el-select
-          v-model="query.dateBetweenEnum"
-          clearable
-          size="small"
-          placeholder="时间筛选"
-          class="filter-item"
-          style="width: 130px"
-          @change="crud.toQuery"
-        >
-          <el-option
-            v-for="item in enabledTypeOptions"
-            :key="item.key"
-            :label="item.display_name"
-            :value="item.key"
-          />
-        </el-select>
         <el-select
           v-model="query.with_goods"
           clearable
@@ -38,7 +19,6 @@
             :value="item.key"
           />
         </el-select>
-        <date-range-picker v-model="query.create_time" class="date-item" />
         <rrOperation />
       </div>
       <crudOperation :permission="permission" />
@@ -46,23 +26,13 @@
     <!--表格渲染-->
     <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
       <el-table-column :selectable="checkboxT" type="selection" width="55" />
-      <el-table-column :show-overflow-tooltip="true" prop="nickname" label="作者" />
-      <el-table-column :show-overflow-tooltip="true" prop="remark" label="备注" />
-      <el-table-column :show-overflow-tooltip="true" prop="unique_id" label="抖音号" />
       <el-table-column width="55" align="center" prop="with_goods">
         <template slot-scope="scope">
           <svg-icon v-if="scope.row.with_goods" icon-class="shopping" />
         </template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="desc" label="标题" />
-      <el-table-column :show-overflow-tooltip="true" width="100" prop="extra[0].sales" label="销量" />
-      <el-table-column :show-overflow-tooltip="true" width="100" prop="sales_diff" label="销量增长">
-        <template slot-scope="scope">
-          {{ scope.row.sales_diff==0?'':scope.row.sales_diff }}
-        </template>
-      </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="digg_count" width="100px" label="当前点赞" />
-      <el-table-column :show-overflow-tooltip="true" prop="diff" width="100px" label="点赞增长" />
+      <el-table-column :show-overflow-tooltip="true" prop="digg_count" width="100px" label="点赞" sortable />
       <el-table-column prop="share_url" label="视频地址">
         <template slot-scope="scope">
           <a
@@ -76,13 +46,8 @@
           </a>
         </template>
       </el-table-column>
-      <!--<el-table-column :show-overflow-tooltip="true" width="100" prop="is_delete" label="是否删除">-->
-      <!--<template slot-scope="scope">-->
-      <!--{{ scope.row.is_delete==true?'是':'否' }}-->
-      <!--</template>-->
-      <!--</el-table-column>-->
-      <el-table-column :show-overflow-tooltip="true" prop="create_time" label="发布时间" />
-      <el-table-column :show-overflow-tooltip="true" prop="update_time" label="更新时间" />
+      <el-table-column :show-overflow-tooltip="true" prop="create_time" width="200" label="发布时间" sortable />
+      <el-table-column :show-overflow-tooltip="true" prop="update_time" width="200" label="更新时间" />
       <el-table-column label="操作" width="55" align="center" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" style="margin-right: 2px" type="text">
@@ -104,11 +69,10 @@ import CRUD, { presenter, header, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
 import pagination from '@crud/Pagination'
-import DateRangePicker from '@/components/DateRangePicker'
 
 export default {
   name: 'Like',
-  components: { pagination, crudOperation, rrOperation, DateRangePicker },
+  components: { pagination, crudOperation, rrOperation },
   created() {
     this.crud.optShow = {
       add: false,
@@ -118,7 +82,7 @@ export default {
     }
   },
   cruds() {
-    return CRUD({ title: '点赞趋势', url: 'api/aweme/like', crudMethod: { ...crudJob }})
+    return CRUD({ title: '最新作品列表', url: 'api/aweme/queryNewAweme', crudMethod: { ...crudJob }})
   },
   mixins: [presenter(), header(), crud()],
 
@@ -129,7 +93,6 @@ export default {
         { key: 'TWO_HOUR', display_name: '最近2小时' },
         { key: 'FOUR_HOUR', display_name: '最近4小时' },
         { key: 'SIX_HOUR', display_name: '最近6小时' },
-        { key: 'TWELVE_HOUR', display_name: '最近12小时' },
         { key: 'ONE_DAY', display_name: '最近24小时' }
       ],
       withGoodsOptions: [
@@ -153,6 +116,11 @@ export default {
     // 显示日志
     checkboxT(row, rowIndex) {
       return row.id !== 1
+    },
+    // 列表前传参
+    [CRUD.HOOK.beforeRefresh]() {
+      this.query.unique_id = this.$route.params.unique_id
+      return true
     }
   }
 }

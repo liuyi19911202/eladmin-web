@@ -1,110 +1,73 @@
 <template>
-  <div v-loading="!show" element-loading-text="数据加载中..." :style="!show ? 'height: 500px' : 'height: 100%'" class="app-container">
-    <div v-if="show">
-      <el-card class="box-card">
-        <div style="color: #666;font-size: 13px;">
-          <svg-icon icon-class="system" style="margin-right: 5px" />
-          <span>
-            视频ID：{{ this.$route.params.aweme_id }}
-          </span>
-        </div>
-      </el-card>
+  <div class="dashboard-container">
+    <div class="dashboard-editor-container">
+      <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
-      <div>
-        <el-row>
-          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" style="margin-bottom: 10px">
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span style="font-weight: bold;color: #666;font-size: 15px">视频增长率监控</span>
-              </div>
-              <div>
-                <v-chart :options="cpuInfo" />
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-      </div>
+      <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+        <line-chart :chart-data="lineChartData" />
+      </el-row>
     </div>
   </div>
 </template>
 
 <script>
-import ECharts from 'vue-echarts'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/component/polar'
+import PanelGroup from './../../dashboard/PanelGroup'
+import LineChart from './../../dashboard/LineChart_1'
 import { initData } from '@/api/data'
+
+const lineChartData = {
+  newVisitis: {
+    expectedData: [],
+    actualData: [],
+    xAxisData: []
+  },
+  messages: {
+    expectedData: [],
+    actualData: []
+  },
+  purchases: {
+    expectedData: [],
+    actualData: []
+  },
+  shoppings: {
+    expectedData: [],
+    actualData: []
+  }
+}
+
 export default {
-  name: 'ServerMonitor',
+  name: 'Dashboard',
   components: {
-    'v-chart': ECharts
+    PanelGroup,
+    LineChart
   },
   data() {
     return {
-      show: false,
-      monitor: null,
-      url: 'api/monitor',
-      data: {},
-      memoryInfo: {
-        tooltip: {
-          trigger: 'axis'
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: []
-        },
-        yAxis: {
-          type: 'value',
-          min: 0,
-          max: 100,
-          interval: 20
-        },
-        series: [{
-          data: [],
-          type: 'line',
-          areaStyle: {
-            normal: {
-              color: 'rgb(32, 160, 255)' // 改变区域颜色
-            }
-          },
-          itemStyle: {
-            normal: {
-              color: '#6fbae1',
-              lineStyle: {
-                color: '#6fbae1' // 改变折线颜色
-              }
-            }
-          }
-        }]
-      }
+      url: 'api/aweme/like/queryAwemeDetail',
+      lineChartData: lineChartData.newVisitis,
+      enabledTypeOptions: [
+        { key: 'TWO_HOUR', display_name: '最近2小时' },
+        { key: 'FOUR_HOUR', display_name: '最近4小时' },
+        { key: 'SIX_HOUR', display_name: '最近6小时' },
+        { key: 'TWELVE_HOUR', display_name: '最近12小时' },
+        { key: 'ONE_DAY', display_name: '最近24小时' }
+      ]
     }
   },
   created() {
     this.init()
-    this.monitor = window.setInterval(() => {
-      setTimeout(() => {
-        this.init()
-      }, 2)
-    }, 3500)
-  },
-  destroyed() {
-    clearInterval(this.monitor)
   },
   methods: {
     init() {
-      initData(this.url, {}).then(data => {
+      const params = {
+        str_aweme_id: this.$route.params.str_aweme_id
+      }
+      initData(this.url, params).then(data => {
         this.data = data
         this.show = true
-        if (this.cpuInfo.xAxis.data.length >= 8) {
-          this.cpuInfo.xAxis.data.shift()
-          this.memoryInfo.xAxis.data.shift()
-          this.cpuInfo.series[0].data.shift()
-          this.memoryInfo.series[0].data.shift()
-        }
-        this.cpuInfo.xAxis.data.push(data.time)
-        this.memoryInfo.xAxis.data.push(data.time)
-        this.cpuInfo.series[0].data.push(parseFloat(data.cpu.used))
-        this.memoryInfo.series[0].data.push(parseFloat(data.memory.usageRate))
+        lineChartData.newVisitis.xAxisData = data.xAxisData
+        lineChartData.newVisitis.expectedData = data.digg_count
+        lineChartData.newVisitis.actualData = data.sales
       })
     }
   }
@@ -112,41 +75,28 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
- ::v-deep .box-card {
-    margin-bottom: 5px;
-    span {
-      margin-right: 28px;
+  .dashboard-editor-container {
+    padding: 32px;
+    background-color: rgb(240, 242, 245);
+    position: relative;
+
+    .github-corner {
+      position: absolute;
+      top: 0;
+      border: 0;
+      right: 0;
     }
-    .el-icon-refresh {
-      margin-right: 10px;
-      float: right;
-      cursor:pointer;
+
+    .chart-wrapper {
+      background: #fff;
+      padding: 16px 16px 0;
+      margin-bottom: 32px;
     }
   }
-  .cpu, .memory, .swap, .disk  {
-    width: 20%;
-    float: left;
-    padding-bottom: 20px;
-    margin-right: 5%;
-  }
- .title {
-   text-align: center;
-   font-size: 15px;
-   font-weight: 500;
-   color: #999;
-   margin-bottom: 16px;
- }
- .footer {
-    text-align: center;
-    font-size: 15px;
-    font-weight: 500;
-    color: #999;
-    margin-top: -5px;
-    margin-bottom: 10px;
-  }
-  .content {
-    text-align: center;
-    margin-top: 5px;
-    margin-bottom: 5px;
+
+  @media (max-width:1024px) {
+    .chart-wrapper {
+      padding: 8px;
+    }
   }
 </style>

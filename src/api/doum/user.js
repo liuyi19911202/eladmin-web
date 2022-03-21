@@ -16,6 +16,14 @@ export function del(ids) {
   })
 }
 
+export function edit(data) {
+  return request({
+    url: 'api/doum/users/updateRemark',
+    method: 'put',
+    data
+  })
+}
+
 export function execution(params) {
   return request({
     url: 'api/doum/users/getUser',
@@ -24,4 +32,12 @@ export function execution(params) {
   })
 }
 
-export default { del, execution, add }
+export function updateRemark(params) {
+  return request({
+    url: 'api/doum/users/updateRemark',
+    method: 'put',
+    params
+  })
+}
+
+export default { del, edit, execution, add }

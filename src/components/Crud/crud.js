@@ -261,7 +261,9 @@ function CRUD(options) {
         crud.resetForm()
         crud.addSuccessNotify()
         callVmHook(crud, CRUD.HOOK.afterSubmit)
-        crud.toQuery()
+        setTimeout(() => {
+          crud.toQuery()
+        }, 800)
       }).catch(() => {
         crud.status.add = CRUD.STATUS.PREPARED
         callVmHook(crud, CRUD.HOOK.afterAddError)
@@ -317,7 +319,9 @@ function CRUD(options) {
         crud.dleChangePage(1)
         crud.delSuccessNotify()
         callVmHook(crud, CRUD.HOOK.afterDelete, data)
-        crud.refresh()
+        setTimeout(() => {
+          crud.refresh()
+        }, 800)
       }).catch(() => {
         if (delAll) {
           crud.delAllLoading = false

@@ -2,7 +2,7 @@ module.exports = {
   /**
    * @description 网站标题
    */
-  title: '抖M',
+  title: '爆款挖掘机',
   /**
    * @description 是否显示 tagsView
    */

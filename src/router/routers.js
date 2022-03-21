@@ -65,10 +65,24 @@ export const constantRouterMap = [
     redirect: 'noredirect',
     children: [
       {
-        path: 'detail/:aweme_id',
+        path: 'detail/:str_aweme_id',
         component: (resolve) => require(['@/views/doum/like/detail'], resolve),
         name: '视频详情',
         meta: { title: '视频详情' }
+      }
+    ]
+  },
+  {
+    path: '/doum/user',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'detail/:unique_id',
+        component: (resolve) => require(['@/views/doum/user/detail'], resolve),
+        name: '作品详情',
+        meta: { title: '作品详情' }
       }
     ]
   }

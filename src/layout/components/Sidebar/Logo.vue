@@ -25,7 +25,7 @@ export default {
   },
   data() {
     return {
-      title: '抖M-后台管理',
+      title: '爆款挖掘机-后台管理',
       logo: Logo
     }
   }
